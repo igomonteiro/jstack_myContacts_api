@@ -1,4 +1,5 @@
 const CategoriesRepository = require('../repositories/CategoriesRepository');
+const isValidUUID = require('../utils/isValidUUID');
 
 class CategoryController {
   async index(request, response) {
@@ -11,6 +12,11 @@ class CategoryController {
   async show(request, response) {
     // Obter um registro
     const { id } = request.params;
+
+    if (!isValidUUID(id)) {
+      return response.status(400).json({ error: 'Invalid category' });
+    }
+
     const contact = await CategoriesRepository.findById(id);
 
     if (!contact) {
@@ -31,7 +37,7 @@ class CategoryController {
 
     const category = await CategoriesRepository.create({ name });
 
-    return response.json(category);
+    return response.status(201).json(category);
   }
 }
 
